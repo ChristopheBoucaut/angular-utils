@@ -115,6 +115,57 @@
     };
 
     /**
+     * Check if this key is present in cache.
+     * 
+     * @param {string} key Key to search in the cache.
+     * 
+     * @return {Boolean} True if it's present, else false.
+     */
+    Cache.prototype.isCached = function(key) {
+        return this.getStorage().itemExist(this.getNamespaceStorage(), key);
+    };
+
+    /**
+     * Check if this key references a expired value.
+     * 
+     * @param {string} key Key to search in the cache.
+     * 
+     * @return {Boolean} True if it isn't present or value is expired, else false.
+     */
+    Cache.prototype.isExpired = function(key) {
+        if (!this.isCached(key)) {
+            return true;
+        }
+
+        var itemCached = this.getStorage().getItem(this.getNamespaceStorage(), key);
+        var container = new CacheContainer(itemCached.value, new Date(itemCached.dateExpire));
+
+        return container.isExpired();
+    };
+
+    /**
+     * Get the value cached referenced by the key.
+     * 
+     * @param {string} key Key to search the value.
+     * 
+     * @return {mixed}
+     */
+    Cache.prototype.get = function(key) {
+        if (!this.isCached(key)) {
+            throw new CacheException("Key is not cached.");
+        }
+
+        var item = this.getStorage().getItem(this.getNamespaceStorage(), key);
+        var container = new CacheContainer(item.value, new Date(item.dateExpire));
+
+        if (container.isExpired()) {
+            throw new CacheException("Value referenced by '"+key+"' key is expired."); 
+        }
+
+        return container.value;
+    };
+
+    /**
      * CacheContainer's constructor.
      * 
      * @param {mixed} value      Value to cached.
@@ -136,7 +187,7 @@
      * @return {Boolean} True: expired, else false.
      */
     CacheContainer.prototype.isExpired = function() {
-        return new Date(this.dateExpire) < new Date();
+        return this.dateExpire < new Date();
     };
 
     /**
