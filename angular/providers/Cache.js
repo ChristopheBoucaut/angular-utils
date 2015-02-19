@@ -166,6 +166,56 @@
     };
 
     /**
+     * Remove the value referenced by the key.
+     * 
+     * @param {string} key Key to delete the value.
+     * 
+     * @return {Boolean} True if the deletion is successful, else false.
+     */
+    Cache.prototype.remove = function(key) {
+        return this.getStorageService().removeItem(this.getNamespaceStorage(), key);
+    };
+
+    /**
+     * Remove all cached values.
+     */
+    Cache.prototype.removeAll = function() {
+        this.getStorageService().clearNamespace(this.getNamespaceStorage());
+    };
+
+    /**
+     * Remove the expired values.
+     * 
+     * @return {integer} Return count of deleted values.
+     *
+     * @throws {CacheException} If the deletion is failed for one value.
+     */
+    Cache.prototype.clean = function() {
+        var items = this.getStorageService().getItems(this.getNamespaceStorage());
+        var countValuesDeleted = 0;
+        for (var key in items) {
+            var container = new CacheContainer(items[key].value, new Date(items[key].dateExpire));
+            if (container.isExpired()) {
+                if (!this.remove(key)) {
+                    throw new CacheException("Fail to clean the cache. Fail to '"+key+"' key.");
+                }
+                countValuesDeleted++;
+            }
+        }
+
+        return countValuesDeleted;
+    };
+
+    /**
+     * Count the total cached values.
+     * 
+     * @return {integer}
+     */
+    Cache.prototype.countValuesCached = function() {
+        return this.getStorageService().countItems(this.getNamespaceStorage());
+    };
+
+    /**
      * CacheContainer's constructor.
      * 
      * @param {mixed} value      Value to cached.
@@ -209,4 +259,8 @@
         this.name = "CacheContainerException";
         this.message = message;
     }
+
+    angular.module("cbAngularUtils").constant("cbCacheConstructor", Cache);
+    angular.module("cbAngularUtils").constant("cbCacheExceptionConstructor", CacheException);
+    angular.module("cbAngularUtils").constant("cbCacheContainerConstructor", CacheContainer);
 })(window.angular);
