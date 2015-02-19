@@ -12,23 +12,6 @@
         }
     ]);
 
-    angular.module("cbAngularUtils").service("$cbStorage", [
-        function() {
-            /**
-             * To create a new storage object.
-             * 
-             * @param {object} storage Storage object.
-             * 
-             * @return {Storage}
-             *
-             * @throws {StorageException} If storage is undefined.
-             */
-            this.createNewStorage = function(storage) {
-                return new Storage(storage);
-            };
-        }
-    ]);
-
     /**
      * Storage's constructor.
      * 
@@ -178,4 +161,7 @@
         this.name = "StorageException";
         this.message = message;
     }
+
+    angular.module("cbAngularUtils").constant("cbStorageConstructor", Storage);
+    angular.module("cbAngularUtils").constant("cbStorageExceptionConstructor", StorageException);
 })(window.angular);
