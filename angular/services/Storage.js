@@ -178,4 +178,7 @@
         this.name = "StorageException";
         this.message = message;
     }
+
+    angular.module("cbAngularUtils").constant("cbStorageConstructor", Storage);
+    angular.module("cbAngularUtils").constant("cbStorageExceptionConstructor", StorageException);
 })(window.angular);
