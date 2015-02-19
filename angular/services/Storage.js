@@ -1,18 +1,18 @@
 "use strict";
 
 (function(angular) {
-    angular.module("cbAngularUtils").factory("cbLocalStorage", [
+    angular.module("cbAngularUtils").factory("$cbLocalStorage", [
         function() {
             return new Storage(window.localStorage);
         }
     ]);
-    angular.module("cbAngularUtils").factory("cbSessionStorage", [
+    angular.module("cbAngularUtils").factory("$cbSessionStorage", [
         function() {
             return new Storage(window.sessionStorage);
         }
     ]);
 
-    angular.module("cbAngularUtils").service("cbStorage", [
+    angular.module("cbAngularUtils").service("$cbStorage", [
         function() {
             /**
              * To create a new storage object.
