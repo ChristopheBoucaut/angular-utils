@@ -64,6 +64,57 @@
     }
 
     /**
+     * Try to generate an object for the storage. Use getter methods and public attributes.
+     * 
+     * @param {object} obj [description]
+     * 
+     * @return {object}
+     *
+     * @throws {CacheException} If First argument isn't an object.
+     */
+    Cache.prototype.generateObjectForStorageWithGetter = function(obj) {
+        if (!(obj instanceof Object)) {
+            throw new CacheException("First argument of generateObjectForStorageWithGetter method must be an object.");
+        }
+
+        var objReturn = {};
+        for (var nameFnt in obj) {
+            if (obj[nameFnt] instanceof Function) {
+                var nameVar = nameFnt.match(/^get(.*)/);
+                if (nameVar.length < 2) {
+                    continue;
+                }
+
+                nameVar = nameVar[1].charAt(0).toLowerCase() + nameVar.slice(1);
+
+                // if the getter has got arguments, ignore it.
+                if (!obj[nameFnt].toString().match(/^function[^\(]*\(\)/)) {
+                    continue;
+                }
+
+                objReturn[nameVar] = obj[nameFnt]();
+            } else {
+                objReturn[nameFnt] = obj[nameFnt];
+            }
+        }
+
+        return objReturn;
+    };
+
+    /**
+     * Save an element in the cache.
+     * 
+     * @param {string}  key   Cache Key.
+     * @param {mixed}   value Cached value.
+     * @param {integer} ttl   Time to live in seconds.
+     */
+    Cache.prototype.put = function(key, value, ttl) {
+        var dateExpire = new Date();
+        dateExpire.setSeconds(dateExpire.getSeconds() + ttl);
+        this.getStorageService().setItem(this.getNamespaceStorage(), key, new CacheContainer(value, dateExpire));
+    };
+
+    /**
      * CacheContainer's constructor.
      * 
      * @param {mixed} value      Value to cached.
