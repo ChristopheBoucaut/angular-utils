@@ -1,7 +1,7 @@
-"use strict";
-
 (function(angular) {
-    angular.module("cbAngularUtils").provider("$cbSessionCache", [
+    "use strict";
+
+    angular.module("cbAngularUtils").provider("cbSessionCache", [
         function() {
             var namespaceStorage = "Cache";
 
@@ -18,7 +18,7 @@
         }
     ]);
 
-    angular.module("cbAngularUtils").provider("$cbPersistentCache", [
+    angular.module("cbAngularUtils").provider("cbPersistentCache", [
         function() {
             var namespaceStorage = "Cache";
 
