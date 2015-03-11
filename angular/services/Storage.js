@@ -1,12 +1,12 @@
-"use strict";
-
 (function(angular) {
-    angular.module("cbAngularUtils").factory("$cbLocalStorage", [
+    "use strict";
+
+    angular.module("cbAngularUtils").factory("cbLocalStorage", [
         function() {
             return new Storage(window.localStorage);
         }
     ]);
-    angular.module("cbAngularUtils").factory("$cbSessionStorage", [
+    angular.module("cbAngularUtils").factory("cbSessionStorage", [
         function() {
             return new Storage(window.sessionStorage);
         }
