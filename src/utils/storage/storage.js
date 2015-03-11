@@ -1,12 +1,13 @@
 (function(angular) {
     "use strict";
 
-    angular.module("cbAngularUtils").factory("cbLocalStorage", [
+    var moduleStorage = angular.module("cbAngular.utils.storage", []);
+    moduleStorage.factory("cbLocalStorage", [
         function() {
             return new Storage(window.localStorage);
         }
     ]);
-    angular.module("cbAngularUtils").factory("cbSessionStorage", [
+    moduleStorage.factory("cbSessionStorage", [
         function() {
             return new Storage(window.sessionStorage);
         }
@@ -162,6 +163,6 @@
         this.message = message;
     }
 
-    angular.module("cbAngularUtils").constant("cbStorageConstructor", Storage);
-    angular.module("cbAngularUtils").constant("cbStorageExceptionConstructor", StorageException);
+    moduleStorage.constant("cbStorageConstructor", Storage);
+    moduleStorage.constant("cbStorageExceptionConstructor", StorageException);
 })(window.angular);

@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# Define color for after.
+COLOR_NORMAL="\\033[0;39m";
+COLOR_YELLOW="\\033[1;33m";
+COLOR_RED="\\033[1;31m";
+
+JSHINT_BIN=$(which jshint);
+TMP_STAGING=".tmp_staging"
+# egrep compatible pattern of  files to be checked
+JS_FILE_PATTERN="\.js$"
+
+# simple check if jshint is set up correctly
+if [ ! -x $JSHINT_BIN ]; then
+    echo "JSHint bin not found or executable -> $JSHINT_BIN"
+    exit 1
+fi
+
+# stolen from template file
+if git rev-parse --verify HEAD
+then
+    against=HEAD
+else
+    # Initial commit: diff against an empty tree object
+    against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+FILES=$(git diff-index --name-only --cached --diff-filter=ACMR $against -- )
+
+if [ "$FILES" == "" ]; then
+    exit 0
+fi
+# create temporary copy of staging area
+if [ -e $TMP_STAGING ]; then
+    rm -rf $TMP_STAGING
+fi
+mkdir $TMP_STAGING
+
+# match files against whitelist
+FILES_TO_CHECK=""
+for FILE in $FILES
+do
+    echo "$FILE" | egrep -q "$JS_FILE_PATTERN"
+    RETVAL=$?
+    if [ "$RETVAL" -eq "0" ]
+    then
+        FILES_TO_CHECK="$FILES_TO_CHECK $FILE"
+    fi
+done
+
+if [ ! "$FILES_TO_CHECK" == "" ]; then
+    # Copy contents of staged version of files to temporary staging area
+    # because we only want the staged version that will be commited and not
+    # the version in the working directory
+    STAGED_FILES=""
+    for FILE in $FILES_TO_CHECK
+    do
+      ID=$(git diff-index --cached $against $FILE | cut -d " " -f4)
+
+      # create staged version of file in temporary staging area with the same
+      # path as the original file so that the phpcs ignore filters can be applied
+      mkdir -p "$TMP_STAGING/$(dirname $FILE)"
+      git cat-file blob $ID > "$TMP_STAGING/$FILE"
+      if [ `echo "$FILE" | grep "hooks/\|www/js/"` ] ; then
+          STAGED_FILES="$STAGED_FILES $TMP_STAGING/$FILE"
+      fi
+    done
+
+    if [ "$STAGED_FILES" ] ; then
+        OUTPUT=$($JSHINT_BIN $STAGED_FILES)
+        RETVAL=$?
+        if [ $RETVAL -ne 0 ]; then
+            echo -e $COLOR_RED"Error JSHint:"$COLOR_NORMAL;
+            echo "$OUTPUT"
+            echo -e $COLOR_YELLOW"Command executed:"$COLOR_NORMAL;
+            echo "$JSHINT_BIN $STAGED_FILES"
+            rm -rf $TMP_STAGING
+            exit 1;
+        fi
+    fi
+fi
+
+# delete temporary copy of staging area
+rm -rf $TMP_STAGING
+
+exit 0

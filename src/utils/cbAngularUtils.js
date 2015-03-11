@@ -1,4 +1,4 @@
 (function(angular) {
     "use strict";
-    angular.module("cbAngularUtils", []);
+    angular.module("cbAngular.utils", []);
 })(window.angular);
