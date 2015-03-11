@@ -1,7 +1,10 @@
 (function(angular) {
     "use strict";
 
-    angular.module("cbAngularUtils").provider("cbSessionCache", [
+    var moduleCache = angular.module("cbAngular.utils.cache", [
+        "cbAngular.utils.storage"
+    ]);
+    moduleCache.provider("cbSessionCache", [
         function() {
             var namespaceStorage = "Cache";
 
@@ -10,15 +13,15 @@
             };
 
             this.$get = [
-                "$cbSessionStorage",
-                function ($cbSessionStorage) {
-                    return new Cache($cbSessionStorage, name);
+                "cbSessionStorage",
+                function (cbSessionStorage) {
+                    return new Cache(cbSessionStorage, name);
                 }
             ];
         }
     ]);
 
-    angular.module("cbAngularUtils").provider("cbPersistentCache", [
+    moduleCache.provider("cbPersistentCache", [
         function() {
             var namespaceStorage = "Cache";
 
@@ -27,9 +30,9 @@
             };
 
             this.$get = [
-                "$cbLocalStorage",
-                function ($cbLocalStorage) {
-                    return new Cache($cbLocalStorage, namespaceStorage);
+                "cbLocalStorage",
+                function (cbLocalStorage) {
+                    return new Cache(cbLocalStorage, namespaceStorage);
                 }
             ];
         }
@@ -45,7 +48,7 @@
      * @throws {CacheException} If namespace storage is undefined or empty.
      */
     function Cache(_storageService, _namespaceStorage) {
-        var StorageConstructor = angular.module("cbAngularUtils").constant("cbStorageConstructor");
+        var StorageConstructor = moduleCache.constant("cbStorageConstructor");
         if (!_storageService || !(_storageService instanceof StorageConstructor)) {
             throw new CacheException("The storage service is undefined or not instance of Storage.");
         }
@@ -260,7 +263,7 @@
         this.message = message;
     }
 
-    angular.module("cbAngularUtils").constant("cbCacheConstructor", Cache);
-    angular.module("cbAngularUtils").constant("cbCacheExceptionConstructor", CacheException);
-    angular.module("cbAngularUtils").constant("cbCacheContainerConstructor", CacheContainer);
+    moduleCache.constant("cbCacheConstructor", Cache);
+    moduleCache.constant("cbCacheExceptionConstructor", CacheException);
+    moduleCache.constant("cbCacheContainerConstructor", CacheContainer);
 })(window.angular);
