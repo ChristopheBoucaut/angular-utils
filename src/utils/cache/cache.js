@@ -219,6 +219,24 @@
     };
 
     /**
+     * Return the Cache's exception constructor.
+     * 
+     * @return {Function}
+     */
+    Cache.prototype.getException = function() {
+        return CacheException;
+    };
+
+    /**
+     * Return the Cache's container constructor.
+     * 
+     * @return {Function}
+     */
+    Cache.prototype.getContainer = function() {
+        return CacheContainer;
+    };
+
+    /**
      * CacheContainer's constructor.
      * 
      * @param {mixed} value      Value to cached.
@@ -244,6 +262,15 @@
     };
 
     /**
+     * Return the CacheContainer's exception constructor.
+     * 
+     * @return {Function} 
+     */
+    CacheContainer.prototype.getException = function() {
+        return CacheContainerException;
+    };
+
+    /**
      * Exception for cache object.
      * 
      * @param {string} message Error message.
@@ -264,6 +291,4 @@
     }
 
     moduleCache.constant("cbCacheConstructor", Cache);
-    moduleCache.constant("cbCacheExceptionConstructor", CacheException);
-    moduleCache.constant("cbCacheContainerConstructor", CacheContainer);
 })(window.angular);

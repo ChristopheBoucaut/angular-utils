@@ -154,6 +154,15 @@
     };
 
     /**
+     * Return the Storage's exception constructor.
+     * 
+     * @return {Function}
+     */
+    Storage.prototype.getException = function() {
+        return StorageException;
+    };
+
+    /**
      * Exception for storage object.
      * 
      * @param {string} message Error message.
@@ -164,5 +173,4 @@
     }
 
     moduleStorage.constant("cbStorageConstructor", Storage);
-    moduleStorage.constant("cbStorageExceptionConstructor", StorageException);
 })(window.angular);
