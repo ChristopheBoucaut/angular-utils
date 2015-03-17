@@ -316,14 +316,14 @@
             }
             if (valueParam instanceof Array) {
                 for (var i = 0; i < valueParam.length; i++) {
-                    params.push(nameParam+"[]="+valueParam[i]);
+                    params.push(nameParam+"[]="+encodeURIComponent(valueParam[i]));
                 }
             } else if (valueParam instanceof Object) {
                 for (var nameKey in valueParam) {
-                    params.push(nameParam+"["+nameKey+"]="+valueParam[nameKey]);
+                    params.push(nameParam+"["+nameKey+"]="+encodeURIComponent(valueParam[nameKey]));
                 }
             } else {
-                params.push(nameParam+"="+valueParam);
+                params.push(nameParam+"="+encodeURIComponent(valueParam));
             }
         }
 
