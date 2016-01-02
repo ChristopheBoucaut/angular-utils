@@ -1,0 +1,7 @@
+{
+  "name": "cb-angular-utils",
+  "version": "0.0.1",
+  "main": "src/utils/cbAngularUtils.js",
+  "dependencies": {},
+  "overrides": {}
+}
